@@ -15,6 +15,7 @@
     "express": "^4.13.3",
     "express-busboy": "^2.4.4",
     "lodash": "^3.10.1",
+    "timecode": "0.0.3",
     "yargs": "^3.22.2"
   }
 }
