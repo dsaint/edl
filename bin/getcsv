@@ -13,25 +13,23 @@ var argv = require('yargs')
             .demand(['f'])
             .argv
 
+
 var edlStream = fs.createReadStream(argv['f'], { flags: 'r', encoding: 'utf-8' });
+var fileTypes = {
+    'CMX': parser.cmx3600,
+    'FILE32': parser.file32
+};
 var options = {
-    stream: edlStream
+    stream: edlStream,
+    filter: {
+        include: (argv.include) ? filters.nameIncludes(argv.include.split(',')) : null,
+        exclude: (argv.exclude) ? filters.nameExcludes(argv.exclude.split(',')) : null
+    },
+    parser: fileTypes[argv['t']]
 };
 
 edlStream.on('csv', function(events) {
-    events.forEach(function(line) { console.log(line)});
+    events.forEach(function(line) { console.log(line.join(',')) });
 })
-
-if (argv['t'] === 'CMX') {
-    options.parser = parser.cmx3600;
-} else if (argv['t'] === 'FILE32') {
-    options.parser = parser.file32;
-}
-
-if (argv['include']) {
-    options.filter = filters.nameIncludes(argv['include']);
-} else if (argv['exclude']) {
-    options.filter = filters.nameExcludes(argv['exclude']);
-}
 
 generator(options);
